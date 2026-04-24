@@ -1,0 +1,6 @@
+@DeadlineService.Api_HostAddress = http://localhost:5283
+
+GET {{DeadlineService.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

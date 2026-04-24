@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мои задачи — Deadline Service</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      margin: 0;
+      padding: 40px 16px;
+      color: #111827;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 38px;
+    }
+
+    .status {
+      color: #4b5563;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button {
+      cursor: pointer;
+      background: #0f172a;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background: #1e293b;
+    }
+
+    .ghost-btn {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .ghost-btn:hover {
+      background: #d1d5db;
+    }
+
+    .danger-btn {
+      background: #b91c1c;
+    }
+
+    .danger-btn:hover {
+      background: #991b1b;
+    }
+
+    .task {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 14px;
+      background: #fafafa;
+    }
+
+    .task-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .task-meta {
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .task-actions button {
+      width: auto;
+      min-width: 160px;
+      margin-bottom: 0;
+    }
+
+    .edit-panel {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #ddd;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .top-actions button {
+      width: auto;
+      min-width: 180px;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body onload="initTasksPage()">
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <h1>Мои задачи</h1>
+        <div id="status" class="status">Авторизация...</div>
+      </div>
+     <div class="top-actions">
+  <button id="adminPanelBtn" class="ghost-btn hidden" onclick="window.location.href='/admin.html'">
+    В админ-панель
+  </button>
+  <button class="ghost-btn" onclick="loadTasks()">Обновить список</button>
+  <button class="danger-btn" onclick="logout()">Выйти</button>
+</div>
+    </div>
+
+    <div class="card">
+      <h2>Создать задачу</h2>
+      <input id="taskTitle" type="text" placeholder="Название задачи" />
+      <textarea id="taskDescription" placeholder="Описание"></textarea>
+      <input id="taskDeadline" type="datetime-local" />
+      <input id="taskPriority" type="text" placeholder="Приоритет" value="High" />
+      <button onclick="createTask()">Создать задачу</button>
+    </div>
+
+    <div class="card">
+      <h2>Список задач</h2>
+      <div id="tasks"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
