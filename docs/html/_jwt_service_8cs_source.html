@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.16.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DeadlineService: Исходный файл DeadlineService.Api/Services/JwtService.cs</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">DeadlineService
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.16.1 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Поиск',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('_jwt_service_8cs_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Загрузка...</div>
+<div class="SRStatus" id="Searching">Поиск...</div>
+<div class="SRStatus" id="NoMatches">Не найдено</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">JwtService.cs</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="_jwt_service_8cs.html">См. документацию.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">using </span>System.IdentityModel.Tokens.Jwt;</div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="keyword">using </span>System.Security.Claims;</div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">using </span>System.Text;</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_deadline_service_1_1_api_1_1_models.html">DeadlineService.Api.Models</a>;</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">using </span>Microsoft.Extensions.Configuration;</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">using </span>Microsoft.IdentityModel.Tokens;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="foldopen" id="foldopen00008" data-start="{" data-end="}">
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="namespace_deadline_service_1_1_api_1_1_services.html">    8</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_deadline_service_1_1_api_1_1_services.html">DeadlineService.Api.Services</a>;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="foldopen" id="foldopen00010" data-start="{" data-end="};">
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html">   10</a></span><span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_function" href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html#a06454f47a1855b3b49ef19ef3305989b">JwtService</a></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">private</span> readonly IConfiguration _configuration;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="foldopen" id="foldopen00014" data-start="{" data-end="}">
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html#a06454f47a1855b3b49ef19ef3305989b">   14</a></span>    <span class="keyword">public</span> <a class="code hl_function" href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html#a06454f47a1855b3b49ef19ef3305989b">JwtService</a>(IConfiguration configuration)</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    {</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        _configuration = configuration;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    }</div>
+</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="foldopen" id="foldopen00019" data-start="{" data-end="}">
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html#ad4293a761377c042f2bc45dc0d077118">   19</a></span>    <span class="keyword">public</span> <span class="keywordtype">string</span> <a class="code hl_function" href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html#ad4293a761377c042f2bc45dc0d077118">GenerateToken</a>(<a class="code hl_class" href="class_deadline_service_1_1_api_1_1_models_1_1_user.html">User</a> user)</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    {</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        var key = _configuration[<span class="stringliteral">&quot;Jwt:Key&quot;</span>]!;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        var issuer = _configuration[<span class="stringliteral">&quot;Jwt:Issuer&quot;</span>]!;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        var audience = _configuration[<span class="stringliteral">&quot;Jwt:Audience&quot;</span>]!;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        var claims = <span class="keyword">new</span> List&lt;Claim&gt;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        {</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>            <span class="keyword">new</span> Claim(ClaimTypes.NameIdentifier, user.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_models_1_1_user.html#a948bd057ff887b982264fa89f6bb527f">Id</a>.ToString()),</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>            <span class="keyword">new</span> Claim(ClaimTypes.Email, user.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_models_1_1_user.html#a8391d2a124075de088e526b4acec6792">Email</a>),</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>            <span class="keyword">new</span> Claim(ClaimTypes.Role, user.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_models_1_1_user.html#a5601af8178c2093e4e1b49322afb5767">Role</a>)</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        };</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        var signingKey = <span class="keyword">new</span> SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        var credentials = <span class="keyword">new</span> SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        var token = <span class="keyword">new</span> JwtSecurityToken(</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>            issuer: issuer,</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>            audience: audience,</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            claims: claims,</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            expires: DateTime.UtcNow.AddHours(12),</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            signingCredentials: credentials</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        );</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> JwtSecurityTokenHandler().WriteToken(token);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    }</div>
+</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>}</div>
+</div>
+</div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_models_1_1_user_html"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_models_1_1_user.html">DeadlineService.Api.Models.User</a></div><div class="ttdef"><b>Определения</b> <a href="_user_8cs_source.html#l00003">User.cs:4</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_models_1_1_user_html_a5601af8178c2093e4e1b49322afb5767"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_models_1_1_user.html#a5601af8178c2093e4e1b49322afb5767">DeadlineService.Api.Models.User.Role</a></div><div class="ttdeci">string Role</div><div class="ttdef"><b>Определения</b> <a href="_user_8cs_source.html#l00008">User.cs:8</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_models_1_1_user_html_a8391d2a124075de088e526b4acec6792"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_models_1_1_user.html#a8391d2a124075de088e526b4acec6792">DeadlineService.Api.Models.User.Email</a></div><div class="ttdeci">string Email</div><div class="ttdef"><b>Определения</b> <a href="_user_8cs_source.html#l00006">User.cs:6</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_models_1_1_user_html_a948bd057ff887b982264fa89f6bb527f"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_models_1_1_user.html#a948bd057ff887b982264fa89f6bb527f">DeadlineService.Api.Models.User.Id</a></div><div class="ttdeci">Guid Id</div><div class="ttdef"><b>Определения</b> <a href="_user_8cs_source.html#l00005">User.cs:5</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_services_1_1_jwt_service_html_a06454f47a1855b3b49ef19ef3305989b"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html#a06454f47a1855b3b49ef19ef3305989b">DeadlineService.Api.Services.JwtService.JwtService</a></div><div class="ttdeci">JwtService(IConfiguration configuration)</div><div class="ttdef"><b>Определения</b> <a href="#l00014">JwtService.cs:14</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_services_1_1_jwt_service_html_ad4293a761377c042f2bc45dc0d077118"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html#ad4293a761377c042f2bc45dc0d077118">DeadlineService.Api.Services.JwtService.GenerateToken</a></div><div class="ttdeci">string GenerateToken(User user)</div><div class="ttdef"><b>Определения</b> <a href="#l00019">JwtService.cs:19</a></div></div>
+<div class="ttc" id="anamespace_deadline_service_1_1_api_1_1_models_html"><div class="ttname"><a href="namespace_deadline_service_1_1_api_1_1_models.html">DeadlineService.Api.Models</a></div><div class="ttdef"><b>Определения</b> <a href="_notification_setting_8cs_source.html#l00001">NotificationSetting.cs:1</a></div></div>
+<div class="ttc" id="anamespace_deadline_service_1_1_api_1_1_services_html"><div class="ttname"><a href="namespace_deadline_service_1_1_api_1_1_services.html">DeadlineService.Api.Services</a></div><div class="ttdef"><b>Определения</b> <a href="#l00008">JwtService.cs:8</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="dir_93ece78405f95524055cc345c49d1ee5.html">DeadlineService.Api</a></li><li class="navelem"><a href="dir_0bd1cb53de736249c38f4cc5fc046a8d.html">Services</a></li><li class="navelem"><a href="_jwt_service_8cs.html">JwtService.cs</a></li>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
+  </ul>
+</div>
+</body>
+</html>
