@@ -23,15 +23,15 @@ func NewTaskRepo(db *sqlx.DB, log *zap.Logger) *TaskRepo {
 func (r *TaskRepo) GetTasksNeedingNotification(ctx context.Context) ([]models.TaskWithSettings, error) {
 	query := `
         SELECT 
-            t.id, t.user_id, t.title, t.description, t.deadline_at, t.status, t.priority,
-            u.email,
-            ns.id, ns.remind_before_value, ns.remind_before_unit, ns.channel
-        FROM tasks t
-        JOIN users u ON u.id = t.user_id
-        JOIN notification_settings ns ON ns.task_id = t.id
-        WHERE t.status != 'done'
-          AND t.deadline_at > NOW() - INTERVAL '30 days'
-        ORDER BY t.id, ns.id
+            t."Id", t."UserId", t."Title", t."Description", t."DeadlineAt", t."Status", t."Priority",
+            u."Email",
+            ns."Id", ns."RemindBeforeValue", ns."RemindBeforeUnit", ns."Channel"
+        FROM "Tasks" t
+        JOIN "Users" u ON u."Id" = t."UserId"
+        JOIN "NotificationSettings" ns ON ns."TaskId" = t."Id"
+        WHERE t."Status" != 'Done'
+          AND t."DeadlineAt" > NOW() - INTERVAL '30 days'
+        ORDER BY t."Id", ns."Id"
     `
 
 	rows, err := r.db.QueryxContext(ctx, query)
@@ -56,7 +56,7 @@ func (r *TaskRepo) GetTasksNeedingNotification(ctx context.Context) ([]models.Ta
 			r.log.Warn("scan error", zap.Error(err))
 			continue
 		}
-		setting.TaskId = task.Id // заполняем TaskId для настройки
+		setting.TaskId = task.Id
 
 		if _, ok := taskMap[task.Id]; !ok {
 			taskMap[task.Id] = &models.TaskWithSettings{
@@ -75,9 +75,46 @@ func (r *TaskRepo) GetTasksNeedingNotification(ctx context.Context) ([]models.Ta
 	return result, nil
 }
 
-// Проверка, отправляли ли уведомление за последние 6 часов (когда появится таблица notifications)
-// Пока можно закомментировать или временно всегда возвращать false.
-func (r *TaskRepo) IsAlreadyNotified(ctx context.Context, taskID, settingID uuid.UUID) (bool, error) {
-	// TODO: после создания таблицы notifications написать реальный запрос.
-	return false, nil
+// CreateNotification создаёт запись в таблице Notifications
+func (r *TaskRepo) CreateNotification(ctx context.Context, notif models.Notification) (uuid.UUID, error) {
+	query := `
+		INSERT INTO "Notifications" ("Id", "TaskId", "UserId", "Message", "Channel", "DeliveryStatus", "CreatedAt")
+		VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW())
+		RETURNING "Id"
+	`
+	var id uuid.UUID
+	err := r.db.QueryRowContext(ctx, query,
+		notif.TaskId, notif.UserId, notif.Message, notif.Channel, notif.DeliveryStatus).Scan(&id)
+	return id, err
+}
+
+// UpdateNotificationStatus обновляет статус уведомления и время отправки
+func (r *TaskRepo) UpdateNotificationStatus(ctx context.Context, id uuid.UUID, status string, sentAt *time.Time) error {
+	query := `UPDATE "Notifications" SET "DeliveryStatus"=$1, "SentAt"=$2 WHERE "Id"=$3`
+	_, err := r.db.ExecContext(ctx, query, status, sentAt, id)
+	return err
+}
+
+// LogDeliveryAttempt записывает попытку отправки в историю
+func (r *TaskRepo) LogDeliveryAttempt(ctx context.Context, notifId uuid.UUID, attempt int, status string) error {
+	query := `
+		INSERT INTO "NotificationDeliveryHistories" ("NotificationId", "AttemptNumber", "Status", "AttemptedAt")
+		VALUES ($1, $2, $3, NOW())
+	`
+	_, err := r.db.ExecContext(ctx, query, notifId, attempt, status)
+	return err
+}
+
+// IsAlreadyNotifiedForTaskSetting проверяет, было ли отправлено уведомление за последние 6 часов для данной задачи
+func (r *TaskRepo) IsAlreadyNotifiedForTaskSetting(ctx context.Context, taskId, settingId uuid.UUID) (bool, error) {
+	query := `
+		SELECT EXISTS(
+			SELECT 1 FROM "Notifications"
+			WHERE "TaskId" = $1
+			  AND "CreatedAt" > NOW() - INTERVAL '6 hours'
+		)
+	`
+	var exists bool
+	err := r.db.GetContext(ctx, &exists, query, taskId)
+	return exists, err
 }
