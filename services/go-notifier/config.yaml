@@ -1,0 +1,15 @@
+database:
+  host: "localhost"   # если БД на локальной машине
+  port: 5432
+  user: "postgres"
+  password: "postgres"   # уточни у Геры пароль
+  dbname: "deadline_db"
+  sslmode: "disable"
+
+worker:
+  interval_seconds: 60
+
+smtp:
+  host: "localhost"
+  port: 1025
+  from: "notifier@deadline.local"
