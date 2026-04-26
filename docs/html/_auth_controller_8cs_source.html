@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.16.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DeadlineService: Исходный файл DeadlineService.Api/Controllers/AuthController.cs</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">DeadlineService
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.16.1 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Поиск',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('_auth_controller_8cs_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Загрузка...</div>
+<div class="SRStatus" id="Searching">Поиск...</div>
+<div class="SRStatus" id="NoMatches">Не найдено</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">AuthController.cs</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="_auth_controller_8cs.html">См. документацию.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_deadline_service_1_1_api_1_1_data.html">DeadlineService.Api.Data</a>;</div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_deadline_service_1_1_api_1_1_dtos.html">DeadlineService.Api.Dtos</a>;</div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_deadline_service_1_1_api_1_1_models.html">DeadlineService.Api.Models</a>;</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_deadline_service_1_1_api_1_1_services.html">DeadlineService.Api.Services</a>;</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">using </span>Microsoft.AspNetCore.Mvc;</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">using </span>Microsoft.EntityFrameworkCore;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_deadline_service_1_1_api_1_1_controllers.html">DeadlineService.Api.Controllers</a>;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>[ApiController]</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>[Route(<span class="stringliteral">&quot;api/[controller]&quot;</span>)]</div>
+<div class="foldopen" id="foldopen00012" data-start="{" data-end="};">
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html">   12</a></span><span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_function" href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#ad1d22085081a436a7ae75e61a9c64e51">AuthController</a> : ControllerBase</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>{</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">private</span> readonly <a class="code hl_class" href="class_deadline_service_1_1_api_1_1_data_1_1_app_db_context.html">AppDbContext</a> _dbContext;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">private</span> readonly <a class="code hl_class" href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html">JwtService</a> _jwtService;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="foldopen" id="foldopen00017" data-start="{" data-end="}">
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#ad1d22085081a436a7ae75e61a9c64e51">   17</a></span>    <span class="keyword">public</span> <a class="code hl_function" href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#ad1d22085081a436a7ae75e61a9c64e51">AuthController</a>(<a class="code hl_class" href="class_deadline_service_1_1_api_1_1_data_1_1_app_db_context.html">AppDbContext</a> dbContext, <a class="code hl_class" href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html">JwtService</a> jwtService)</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    {</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        _dbContext = dbContext;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        _jwtService = jwtService;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    }</div>
+</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    [HttpPost(<span class="stringliteral">&quot;register&quot;</span>)]</div>
+<div class="foldopen" id="foldopen00024" data-start="{" data-end="}">
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#a49bf05cec25e6611f38563b51b8940f1">   24</a></span>    <span class="keyword">public</span> async Task&lt;IActionResult&gt; <a class="code hl_function" href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#a49bf05cec25e6611f38563b51b8940f1">Register</a>(<a class="code hl_class" href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html">RegisterRequest</a> request)</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        <span class="keywordflow">if</span> (<span class="keywordtype">string</span>.IsNullOrWhiteSpace(request.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html#a02f28e9fdaeeb4d0f76922a36d4bb039">Email</a>) || <span class="keywordtype">string</span>.IsNullOrWhiteSpace(request.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html#a7fca8acef953080d2a5f7f779c5dac11">Password</a>))</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>            <span class="keywordflow">return</span> BadRequest(<span class="stringliteral">&quot;Email и пароль обязательны.&quot;</span>);</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        var exists = await _dbContext.Users.AnyAsync(x =&gt; x.Email == request.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html#a02f28e9fdaeeb4d0f76922a36d4bb039">Email</a>);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keywordflow">if</span> (exists)</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>            <span class="keywordflow">return</span> BadRequest(<span class="stringliteral">&quot;Пользователь с таким email уже существует.&quot;</span>);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        var user = <span class="keyword">new</span> <a class="code hl_class" href="class_deadline_service_1_1_api_1_1_models_1_1_user.html">User</a></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        {</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>            Id = Guid.NewGuid(),</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>            Email = request.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html#a02f28e9fdaeeb4d0f76922a36d4bb039">Email</a>.Trim(),</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html#a7fca8acef953080d2a5f7f779c5dac11">Password</a>),</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            Role = <span class="stringliteral">&quot;User&quot;</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        };</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        _dbContext.Users.Add(user);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        await _dbContext.SaveChangesAsync();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keywordflow">return</span> Ok(<span class="keyword">new</span> { message = <span class="stringliteral">&quot;Пользователь зарегистрирован.&quot;</span> });</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    }</div>
+</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    [HttpPost(<span class="stringliteral">&quot;login&quot;</span>)]</div>
+<div class="foldopen" id="foldopen00048" data-start="{" data-end="}">
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#abfc40b24e33d72b1ac45ba81accd837d">   48</a></span>    <span class="keyword">public</span> async Task&lt;IActionResult&gt; <a class="code hl_function" href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#abfc40b24e33d72b1ac45ba81accd837d">Login</a>(<a class="code hl_class" href="class_deadline_service_1_1_api_1_1_dtos_1_1_login_request.html">LoginRequest</a> request)</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    {</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        var user = await _dbContext.Users.FirstOrDefaultAsync(x =&gt; x.Email == request.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_dtos_1_1_login_request.html#aa117bfd8a2d462af13d1c2ef47b4c33b">Email</a>);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordflow">if</span> (user is <span class="keyword">null</span>)</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            <span class="keywordflow">return</span> Unauthorized(<span class="stringliteral">&quot;Неверный email или пароль.&quot;</span>);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="keywordflow">if</span> (user.IsBlocked)</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            <span class="keywordflow">return</span> Forbid();</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        var passwordValid = BCrypt.Net.BCrypt.Verify(request.<a class="code hl_property" href="class_deadline_service_1_1_api_1_1_dtos_1_1_login_request.html#a9af266098f952de3dd7f8200e9fe3d82">Password</a>, user.PasswordHash);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keywordflow">if</span> (!passwordValid)</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>            <span class="keywordflow">return</span> Unauthorized(<span class="stringliteral">&quot;Неверный email или пароль.&quot;</span>);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        var token = _jwtService.GenerateToken(user);</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordflow">return</span> Ok(<span class="keyword">new</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            token,</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            user = <span class="keyword">new</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                user.Id,</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                user.Email,</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                user.Role</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>            }</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        });</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    }</div>
+</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>}</div>
+</div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller_html_a49bf05cec25e6611f38563b51b8940f1"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#a49bf05cec25e6611f38563b51b8940f1">DeadlineService.Api.Controllers.AuthController.Register</a></div><div class="ttdeci">async Task&lt; IActionResult &gt; Register(RegisterRequest request)</div><div class="ttdef"><b>Определения</b> <a href="#l00024">AuthController.cs:24</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller_html_abfc40b24e33d72b1ac45ba81accd837d"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#abfc40b24e33d72b1ac45ba81accd837d">DeadlineService.Api.Controllers.AuthController.Login</a></div><div class="ttdeci">async Task&lt; IActionResult &gt; Login(LoginRequest request)</div><div class="ttdef"><b>Определения</b> <a href="#l00048">AuthController.cs:48</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller_html_ad1d22085081a436a7ae75e61a9c64e51"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_controllers_1_1_auth_controller.html#ad1d22085081a436a7ae75e61a9c64e51">DeadlineService.Api.Controllers.AuthController.AuthController</a></div><div class="ttdeci">AuthController(AppDbContext dbContext, JwtService jwtService)</div><div class="ttdef"><b>Определения</b> <a href="#l00017">AuthController.cs:17</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_data_1_1_app_db_context_html"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_data_1_1_app_db_context.html">DeadlineService.Api.Data.AppDbContext</a></div><div class="ttdef"><b>Определения</b> <a href="_app_db_context_8cs_source.html#l00006">AppDbContext.cs:7</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_dtos_1_1_login_request_html"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_dtos_1_1_login_request.html">DeadlineService.Api.Dtos.LoginRequest</a></div><div class="ttdef"><b>Определения</b> <a href="_01_01_01_01_login_request_8cs_source.html#l00003">    LoginRequest.cs:4</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_dtos_1_1_login_request_html_a9af266098f952de3dd7f8200e9fe3d82"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_dtos_1_1_login_request.html#a9af266098f952de3dd7f8200e9fe3d82">DeadlineService.Api.Dtos.LoginRequest.Password</a></div><div class="ttdeci">string Password</div><div class="ttdef"><b>Определения</b> <a href="_01_01_01_01_login_request_8cs_source.html#l00006">    LoginRequest.cs:6</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_dtos_1_1_login_request_html_aa117bfd8a2d462af13d1c2ef47b4c33b"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_dtos_1_1_login_request.html#aa117bfd8a2d462af13d1c2ef47b4c33b">DeadlineService.Api.Dtos.LoginRequest.Email</a></div><div class="ttdeci">string Email</div><div class="ttdef"><b>Определения</b> <a href="_01_01_01_01_login_request_8cs_source.html#l00005">    LoginRequest.cs:5</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_dtos_1_1_register_request_html"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html">DeadlineService.Api.Dtos.RegisterRequest</a></div><div class="ttdef"><b>Определения</b> <a href="_01_01_01_01_register_request_8cs_source.html#l00003">    RegisterRequest.cs:4</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_dtos_1_1_register_request_html_a02f28e9fdaeeb4d0f76922a36d4bb039"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html#a02f28e9fdaeeb4d0f76922a36d4bb039">DeadlineService.Api.Dtos.RegisterRequest.Email</a></div><div class="ttdeci">string Email</div><div class="ttdef"><b>Определения</b> <a href="_01_01_01_01_register_request_8cs_source.html#l00005">    RegisterRequest.cs:5</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_dtos_1_1_register_request_html_a7fca8acef953080d2a5f7f779c5dac11"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_dtos_1_1_register_request.html#a7fca8acef953080d2a5f7f779c5dac11">DeadlineService.Api.Dtos.RegisterRequest.Password</a></div><div class="ttdeci">string Password</div><div class="ttdef"><b>Определения</b> <a href="_01_01_01_01_register_request_8cs_source.html#l00006">    RegisterRequest.cs:6</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_models_1_1_user_html"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_models_1_1_user.html">DeadlineService.Api.Models.User</a></div><div class="ttdef"><b>Определения</b> <a href="_user_8cs_source.html#l00003">User.cs:4</a></div></div>
+<div class="ttc" id="aclass_deadline_service_1_1_api_1_1_services_1_1_jwt_service_html"><div class="ttname"><a href="class_deadline_service_1_1_api_1_1_services_1_1_jwt_service.html">DeadlineService.Api.Services.JwtService</a></div><div class="ttdef"><b>Определения</b> <a href="_jwt_service_8cs_source.html#l00010">JwtService.cs:11</a></div></div>
+<div class="ttc" id="anamespace_deadline_service_1_1_api_1_1_controllers_html"><div class="ttname"><a href="namespace_deadline_service_1_1_api_1_1_controllers.html">DeadlineService.Api.Controllers</a></div><div class="ttdef"><b>Определения</b> <a href="_admin_controller_8cs_source.html#l00007">AdminController.cs:7</a></div></div>
+<div class="ttc" id="anamespace_deadline_service_1_1_api_1_1_data_html"><div class="ttname"><a href="namespace_deadline_service_1_1_api_1_1_data.html">DeadlineService.Api.Data</a></div><div class="ttdef"><b>Определения</b> <a href="_app_db_context_8cs_source.html#l00004">AppDbContext.cs:4</a></div></div>
+<div class="ttc" id="anamespace_deadline_service_1_1_api_1_1_dtos_html"><div class="ttname"><a href="namespace_deadline_service_1_1_api_1_1_dtos.html">DeadlineService.Api.Dtos</a></div><div class="ttdef"><b>Определения</b> <a href="_01_01_01_01_create_task_request_8cs_source.html#l00001">    CreateTaskRequest.cs:1</a></div></div>
+<div class="ttc" id="anamespace_deadline_service_1_1_api_1_1_models_html"><div class="ttname"><a href="namespace_deadline_service_1_1_api_1_1_models.html">DeadlineService.Api.Models</a></div><div class="ttdef"><b>Определения</b> <a href="_notification_setting_8cs_source.html#l00001">NotificationSetting.cs:1</a></div></div>
+<div class="ttc" id="anamespace_deadline_service_1_1_api_1_1_services_html"><div class="ttname"><a href="namespace_deadline_service_1_1_api_1_1_services.html">DeadlineService.Api.Services</a></div><div class="ttdef"><b>Определения</b> <a href="_jwt_service_8cs_source.html#l00008">JwtService.cs:8</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="dir_93ece78405f95524055cc345c49d1ee5.html">DeadlineService.Api</a></li><li class="navelem"><a href="dir_2d020467176ec55b490d3cde6a13eb53.html">Controllers</a></li><li class="navelem"><a href="_auth_controller_8cs.html">AuthController.cs</a></li>
+    <li class="footer">Создано системой <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
+  </ul>
+</div>
+</body>
+</html>
