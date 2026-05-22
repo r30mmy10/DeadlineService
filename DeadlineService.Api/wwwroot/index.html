@@ -4,85 +4,56 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Вход — Deadline Service</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f6f8;
-      margin: 0;
-      padding: 40px 16px;
-    }
-
-    .container {
-      max-width: 560px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      margin-bottom: 10px;
-      font-size: 40px;
-    }
-
-    .subtitle {
-      color: #555;
-      margin-bottom: 24px;
-    }
-
-    .card {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.04);
-    }
-
-    h2 {
-      margin-top: 0;
-      margin-bottom: 16px;
-    }
-
-    input, button {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    button {
-      cursor: pointer;
-      background: #111827;
-      color: white;
-      border: none;
-    }
-
-    button:hover {
-      background: #1f2937;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/site.css" />
 </head>
-<body>
-  <div class="container">
-    <h1>Deadline Service</h1>
-    <div class="subtitle">Вход и регистрация</div>
-
-    <div class="card">
-      <h2>Регистрация</h2>
-      <input id="registerEmail" type="email" placeholder="Email" />
-      <input id="registerPassword" type="password" placeholder="Пароль" />
-      <button onclick="register()">Зарегистрироваться</button>
+<body class="auth-page">
+  <div class="auth-wrap">
+    <div class="auth-hero">
+      <div class="brand-logo">DS</div>
+      <h1>Deadline Service</h1>
+      <p>Контроль дедлайнов и умные напоминания</p>
     </div>
 
     <div class="card">
-      <h2>Вход</h2>
-      <input id="loginEmail" type="email" placeholder="Email" />
-      <input id="loginPassword" type="password" placeholder="Пароль" />
-      <button onclick="login()">Войти</button>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Вход</button>
+        <button type="button" class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Регистрация</button>
+      </div>
+
+      <div id="panelLogin" class="auth-panel">
+        <h2>Добро пожаловать</h2>
+        <p class="card-desc">Войдите, чтобы управлять задачами</p>
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email" />
+        <label for="loginPassword">Пароль</label>
+        <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
+        <button class="btn-block" onclick="login()">Войти</button>
+      </div>
+
+      <div id="panelRegister" class="auth-panel hidden">
+        <h2>Создать аккаунт</h2>
+        <p class="card-desc">Email будет использоваться для уведомлений</p>
+        <label for="registerEmail">Email</label>
+        <input id="registerEmail" type="email" placeholder="you@example.com" autocomplete="email" />
+        <label for="registerPassword">Пароль</label>
+        <input id="registerPassword" type="password" placeholder="••••••••" autocomplete="new-password" />
+        <button class="btn-block" onclick="register()">Зарегистрироваться</button>
+      </div>
+
+      <div class="hint-box">
+        Учебный режим: письма смотрите в <a href="http://localhost:8025" target="_blank" rel="noopener">Mailpit</a> (не в реальный ящик).
+      </div>
     </div>
   </div>
 
   <script src="app.js"></script>
+  <script>
+    function switchAuthTab(tab) {
+      document.getElementById("panelLogin").classList.toggle("hidden", tab !== "login");
+      document.getElementById("panelRegister").classList.toggle("hidden", tab !== "register");
+      document.getElementById("tabLogin").classList.toggle("active", tab === "login");
+      document.getElementById("tabRegister").classList.toggle("active", tab === "register");
+    }
+  </script>
 </body>
 </html>

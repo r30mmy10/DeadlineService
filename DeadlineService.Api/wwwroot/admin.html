@@ -3,174 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Админ-панель — Deadline Service</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f6f8;
-      margin: 0;
-      padding: 40px 16px;
-      color: #111827;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 38px;
-    }
-
-    .status {
-      color: #4b5563;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-
-    .card {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.04);
-    }
-
-    h2, h3 {
-      margin-top: 0;
-    }
-
-    input, textarea, button {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    button {
-      cursor: pointer;
-      background: #0f172a;
-      color: white;
-      border: none;
-    }
-
-    button:hover {
-      background: #1e293b;
-    }
-
-    .ghost-btn {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    .ghost-btn:hover {
-      background: #d1d5db;
-    }
-
-    .danger-btn {
-      background: #b91c1c;
-    }
-
-    .danger-btn:hover {
-      background: #991b1b;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .top-actions button {
-      width: auto;
-      min-width: 180px;
-      margin-bottom: 0;
-    }
-
-    .item {
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 14px;
-      background: #fafafa;
-    }
-
-    .item-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .item-meta {
-      color: #374151;
-      margin-bottom: 6px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .actions button {
-      width: auto;
-      min-width: 160px;
-      margin-bottom: 0;
-    }
-
-    .edit-panel {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #ddd;
-    }
-
-    .hidden {
-      display: none;
-    }
-  </style>
+  <title>Админ — Deadline Service</title>
+  <link rel="stylesheet" href="/css/site.css" />
 </head>
 <body onload="initAdminPage()">
-  <div class="container">
-    <div class="topbar">
-      <div>
-        <h1>Админ-панель</h1>
-        <div id="adminStatus" class="status">Проверка доступа...</div>
+  <div class="container container--wide">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo">DS</div>
+        <div>
+          <h1>Админ-панель</h1>
+          <p id="adminStatus">Проверка доступа…</p>
+        </div>
       </div>
-      <div class="top-actions">
-        <button class="ghost-btn" onclick="window.location.href='/tasks.html'">К задачам пользователя</button>
-        <button class="ghost-btn" onclick="loadAdminData()">Обновить данные</button>
-        <button class="danger-btn" onclick="logout()">Выйти</button>
-      </div>
-    </div>
+      <nav class="nav-actions">
+        <button class="btn-ghost" onclick="window.location.href='/tasks.html'">К задачам</button>
+        <button class="btn-ghost" onclick="loadAdminData()">Обновить</button>
+        <button class="btn-danger" onclick="logout()">Выйти</button>
+      </nav>
+    </header>
 
     <div class="card">
       <h2>Пользователи</h2>
+      <p class="card-desc">Просмотр и блокировка аккаунтов</p>
       <div id="adminUsers"></div>
     </div>
 
     <div class="card">
       <h2>Все задачи</h2>
+      <p class="card-desc">Задачи всех пользователей системы</p>
       <div id="adminTasks"></div>
+    </div>
+
+    <div class="card">
+      <h2>Все уведомления</h2>
+      <p class="card-desc">Сформированные Go-сервисом уведомления</p>
+      <div id="adminNotifications"></div>
     </div>
   </div>
 

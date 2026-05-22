@@ -6,4 +6,5 @@ public class CreateTaskRequest
     public string? Description { get; set; }
     public DateTime DeadlineAt { get; set; }
     public string Priority { get; set; } = "Medium";
+    public TaskReminderDto? Reminder { get; set; }
 }

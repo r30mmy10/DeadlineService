@@ -1,4 +1,4 @@
-const apiBase = "http://localhost:5283";
+const apiBase = window.location.origin;
 let token = localStorage.getItem("token") || "";
 
 async function register() {
@@ -64,8 +64,30 @@ function logout() {
 function updateStatus() {
   const status = document.getElementById("status");
   if (status) {
-    status.textContent = token ? "Авторизован" : "Не авторизован";
+    status.textContent = token ? "В сети" : "Гость";
   }
+}
+
+function emptyState(message) {
+  return `<div class="empty-state"><div class="empty-state-icon">📋</div><p>${message}</p></div>`;
+}
+
+function statusBadge(status) {
+  const key = String(status || "").toLowerCase().replace(/\s+/g, "");
+  const cls = key === "done" ? "badge-done" : key === "inprogress" ? "badge-inprogress" : "badge-pending";
+  return `<span class="badge ${cls}">${escapeHtml(status)}</span>`;
+}
+
+function deliveryBadge(status) {
+  const key = String(status || "").toLowerCase();
+  const cls = key === "sent" ? "badge-sent" : key === "failed" ? "badge-failed" : "badge-pending-status";
+  return `<span class="badge ${cls}">${escapeHtml(status)}</span>`;
+}
+
+function channelBadge(channel) {
+  const key = String(channel || "").toLowerCase().replace(/-/g, "_");
+  const cls = key.includes("email") ? "badge-email" : "badge-in_app";
+  return `<span class="badge ${cls}">${escapeHtml(channel)}</span>`;
 }
 
 function updateAdminButton() {
@@ -80,13 +102,41 @@ function updateAdminButton() {
   }
 }
 
+function buildTaskFilterQuery() {
+  const params = new URLSearchParams();
+  const status = document.getElementById("filterStatus")?.value;
+  const from = document.getElementById("filterDeadlineFrom")?.value;
+  const to = document.getElementById("filterDeadlineTo")?.value;
+  const overdue = document.getElementById("filterOverdue")?.checked;
+
+  if (status) params.set("status", status);
+  if (from) params.set("deadlineFrom", new Date(from).toISOString());
+  if (to) params.set("deadlineTo", new Date(to).toISOString());
+  if (overdue) params.set("overdueOnly", "true");
+
+  const qs = params.toString();
+  return qs ? `?${qs}` : "";
+}
+
+function resetTaskFilters() {
+  const status = document.getElementById("filterStatus");
+  const from = document.getElementById("filterDeadlineFrom");
+  const to = document.getElementById("filterDeadlineTo");
+  const overdue = document.getElementById("filterOverdue");
+  if (status) status.value = "";
+  if (from) from.value = "";
+  if (to) to.value = "";
+  if (overdue) overdue.checked = false;
+  loadTasks();
+}
+
 async function loadTasks() {
   if (!token) {
     alert("Сначала войди");
     return;
   }
 
-  const response = await fetch(`${apiBase}/api/Tasks/my`, {
+  const response = await fetch(`${apiBase}/api/Tasks/my${buildTaskFilterQuery()}`, {
     headers: {
       "Authorization": `Bearer ${token}`
     }
@@ -100,24 +150,22 @@ async function loadTasks() {
   container.innerHTML = "";
 
   if (!Array.isArray(tasks) || tasks.length === 0) {
-    container.innerHTML = "<p>Задач пока нет.</p>";
+    container.innerHTML = emptyState("Задач пока нет — создайте первую выше");
     return;
   }
 
   for (const task of tasks) {
     const div = document.createElement("div");
-    div.className = "task";
+    div.className = "item-card";
 
     div.innerHTML = `
-      <div class="task-title">${escapeHtml(task.title)}</div>
-      <div class="task-meta"><b>Описание:</b> ${escapeHtml(task.description ?? "")}</div>
-      <div class="task-meta"><b>Дедлайн:</b> ${formatDate(task.deadlineAt)}</div>
-      <div class="task-meta"><b>Статус:</b> ${escapeHtml(task.status)}</div>
-      <div class="task-meta"><b>Приоритет:</b> ${escapeHtml(task.priority)}</div>
+      <div class="item-card-title">${escapeHtml(task.title)} ${statusBadge(task.status)}</div>
+      <div class="item-meta"><b>Дедлайн:</b> ${formatDate(task.deadlineAt)} · <b>Приоритет:</b> ${escapeHtml(task.priority)}</div>
+      ${task.description ? `<div class="item-meta">${escapeHtml(task.description)}</div>` : ""}
 
-      <div class="task-actions">
-        <button onclick="toggleEdit('${task.id}')">Редактировать</button>
-        <button class="danger-btn" onclick="deleteTask('${task.id}')">Удалить</button>
+      <div class="item-actions">
+        <button class="btn-ghost" onclick="toggleEdit('${task.id}')">Редактировать</button>
+        <button class="btn-danger" onclick="deleteTask('${task.id}')">Удалить</button>
       </div>
 
       <div id="edit-${task.id}" class="edit-panel hidden">
@@ -151,6 +199,10 @@ async function createTask() {
   const description = document.getElementById("taskDescription").value;
   const deadlineAt = document.getElementById("taskDeadline").value;
   const priority = document.getElementById("taskPriority").value;
+  const remindValue = parseInt(document.getElementById("remindValue")?.value || "1", 10);
+  const remindUnit = document.getElementById("remindUnit")?.value || "Hours";
+  const notifyByEmail = document.getElementById("notifyEmail")?.checked ?? true;
+  const notifyInApp = document.getElementById("notifyInApp")?.checked ?? true;
 
   const response = await fetch(`${apiBase}/api/Tasks`, {
     method: "POST",
@@ -162,7 +214,13 @@ async function createTask() {
       title,
       description,
       deadlineAt: new Date(deadlineAt).toISOString(),
-      priority
+      priority,
+      reminder: {
+        remindBeforeValue: remindValue,
+        remindBeforeUnit: remindUnit,
+        notifyByEmail,
+        notifyInApp
+      }
     })
   });
 
@@ -174,7 +232,7 @@ async function createTask() {
   document.getElementById("taskTitle").value = "";
   document.getElementById("taskDescription").value = "";
   document.getElementById("taskDeadline").value = "";
-  document.getElementById("taskPriority").value = "High";
+  document.getElementById("taskPriority").value = "Medium";
 
   alert("Задача создана");
   loadTasks();
@@ -276,13 +334,45 @@ function initAdminPage() {
     return;
   }
 
-  if (status) status.textContent = "Вы вошли как администратор";
+  if (status) {
+    status.textContent = "Администратор";
+    status.className = "status-pill";
+  }
   loadAdminData();
 }
 
 async function loadAdminData() {
   await loadAdminUsers();
   await loadAdminTasks();
+  await loadAdminNotifications();
+}
+
+async function loadAdminNotifications() {
+  const response = await fetch(`${apiBase}/api/Notifications/admin/all`, {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+
+  const items = await response.json().catch(() => []);
+  const container = document.getElementById("adminNotifications");
+  if (!container) return;
+
+  container.innerHTML = "";
+  if (!Array.isArray(items) || items.length === 0) {
+    container.innerHTML = emptyState("Уведомлений пока нет");
+    return;
+  }
+
+  for (const n of items) {
+    const div = document.createElement("div");
+    div.className = "item-card";
+    div.innerHTML = `
+      <div class="item-card-title">${channelBadge(n.channel)} ${deliveryBadge(n.deliveryStatus)}</div>
+      <div class="item-meta"><b>Пользователь:</b> ${escapeHtml(n.userEmail ?? "")}</div>
+      <div class="item-meta">${escapeHtml(n.message)}</div>
+      <div class="item-meta"><b>Создано:</b> ${formatDate(n.createdAt)}</div>
+    `;
+    container.appendChild(div);
+  }
 }
 
 async function loadAdminUsers() {
@@ -299,18 +389,21 @@ async function loadAdminUsers() {
   container.innerHTML = "";
 
   if (!Array.isArray(users) || users.length === 0) {
-    container.innerHTML = "<p>Пользователей пока нет.</p>";
+    container.innerHTML = emptyState("Пользователей нет");
     return;
   }
 
   for (const user of users) {
     const div = document.createElement("div");
-    div.className = "item";
+    div.className = "item-card";
     div.innerHTML = `
-      <div class="item-title">${escapeHtml(user.email)}</div>
-      <div class="item-meta"><b>ID:</b> ${user.id}</div>
-      <div class="item-meta"><b>Роль:</b> ${escapeHtml(user.role)}</div>
-      <div class="item-meta"><b>Заблокирован:</b> ${user.isBlocked ? "Да" : "Нет"}</div>
+      <div class="item-card-title">${escapeHtml(user.email)}</div>
+      <div class="item-meta"><b>Роль:</b> ${escapeHtml(user.role)} · <b>Блок:</b> ${user.isBlocked ? "да" : "нет"}</div>
+      <div class="item-actions">
+        ${user.isBlocked
+          ? `<button class="btn-ghost" onclick="setUserBlocked('${user.id}', false)">Разблокировать</button>`
+          : `<button class="btn-danger" onclick="setUserBlocked('${user.id}', true)">Заблокировать</button>`}
+      </div>
     `;
     container.appendChild(div);
   }
@@ -330,24 +423,21 @@ async function loadAdminTasks() {
   container.innerHTML = "";
 
   if (!Array.isArray(tasks) || tasks.length === 0) {
-    container.innerHTML = "<p>Задач пока нет.</p>";
+    container.innerHTML = emptyState("Задач нет");
     return;
   }
 
   for (const task of tasks) {
     const div = document.createElement("div");
-    div.className = "item";
+    div.className = "item-card";
 
     div.innerHTML = `
-      <div class="item-title">${escapeHtml(task.title)}</div>
+      <div class="item-card-title">${escapeHtml(task.title)} ${statusBadge(task.status)}</div>
       <div class="item-meta"><b>Пользователь:</b> ${escapeHtml(task.userEmail ?? "")}</div>
-      <div class="item-meta"><b>Описание:</b> ${escapeHtml(task.description ?? "")}</div>
-      <div class="item-meta"><b>Дедлайн:</b> ${formatDate(task.deadlineAt)}</div>
-      <div class="item-meta"><b>Статус:</b> ${escapeHtml(task.status)}</div>
-      <div class="item-meta"><b>Приоритет:</b> ${escapeHtml(task.priority)}</div>
+      <div class="item-meta"><b>Дедлайн:</b> ${formatDate(task.deadlineAt)} · ${escapeHtml(task.priority)}</div>
 
-      <div class="actions">
-        <button onclick="toggleAdminEdit('${task.id}')">Редактировать как админ</button>
+      <div class="item-actions">
+        <button class="btn-ghost" onclick="toggleAdminEdit('${task.id}')">Редактировать</button>
       </div>
 
       <div id="admin-edit-${task.id}" class="edit-panel hidden">
@@ -400,4 +490,59 @@ async function adminUpdateTask(taskId) {
 
   alert("Задача обновлена");
   loadAdminTasks();
+}
+
+function initNotificationsPage() {
+  token = localStorage.getItem("token") || "";
+  if (!token) {
+    window.location.href = "/";
+    return;
+  }
+  loadNotifications();
+}
+
+async function loadNotifications() {
+  const response = await fetch(`${apiBase}/api/Notifications/my`, {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+
+  const items = await response.json().catch(() => []);
+  const container = document.getElementById("notificationsList");
+  if (!container) return;
+
+  container.innerHTML = "";
+  if (!Array.isArray(items) || items.length === 0) {
+    container.innerHTML = emptyState("Пока пусто — создайте задачу с напоминанием");
+    return;
+  }
+
+  for (const n of items) {
+    const div = document.createElement("div");
+    div.className = "item-card";
+    div.innerHTML = `
+      <div class="item-card-title">${channelBadge(n.channel)} ${deliveryBadge(n.deliveryStatus)}</div>
+      <div class="item-meta">${escapeHtml(n.message)}</div>
+      <div class="item-meta"><b>Создано:</b> ${formatDate(n.createdAt)} · <b>Отправлено:</b> ${n.sentAt ? formatDate(n.sentAt) : "—"}</div>
+    `;
+    container.appendChild(div);
+  }
+}
+
+async function setUserBlocked(userId, isBlocked) {
+  const response = await fetch(`${apiBase}/api/Admin/users/${userId}/block`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({ isBlocked })
+  });
+
+  if (!response.ok) {
+    alert("Не удалось изменить статус пользователя");
+    return;
+  }
+
+  alert(isBlocked ? "Пользователь заблокирован" : "Пользователь разблокирован");
+  loadAdminUsers();
 }

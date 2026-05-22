@@ -34,6 +34,26 @@ public class AdminController : ControllerBase
         return Ok(users);
     }
 
+    [HttpPut("users/{id:guid}/block")]
+    public async Task<IActionResult> UpdateUserBlock(Guid id, UpdateUserBlockRequest request)
+    {
+        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+        if (user is null)
+            return NotFound("Пользователь не найден.");
+
+        user.IsBlocked = request.IsBlocked;
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new
+        {
+            user.Id,
+            user.Email,
+            user.Role,
+            user.IsBlocked,
+            message = request.IsBlocked ? "Пользователь заблокирован." : "Пользователь разблокирован."
+        });
+    }
+
     [HttpGet("tasks")]
     public async Task<IActionResult> GetAllTasks()
     {

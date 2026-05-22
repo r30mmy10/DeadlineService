@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15
@@ -18,20 +16,53 @@ services:
       timeout: 5s
       retries: 5
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: deadline-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  api:
+    build:
+      context: .
+      dockerfile: DeadlineService.Api/Dockerfile
+    container_name: deadline-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=deadline_service_db;Username=postgres;Password=mysecretpassword
+      Jwt__Key: SUPER_SECRET_KEY_123456789_SUPER_SECRET_KEY
+      Jwt__Issuer: DeadlineService
+      Jwt__Audience: DeadlineServiceUsers
+      ASPNETCORE_URLS: http://+:8080
+    ports:
+      - "8080:8080"
+
   go-notifier:
     build: ./services/go-notifier
     container_name: deadline-notifier
     depends_on:
       postgres:
         condition: service_healthy
+      mailpit:
+        condition: service_started
+      api:
+        condition: service_started
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=mysecretpassword
-      - DB_NAME=deadline_service_db
-      - DB_SSLMODE=disable
-      - WORKER_INTERVAL=60
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: mysecretpassword
+      DB_NAME: deadline_service_db
+      DB_SSLMODE: disable
+      WORKER_INTERVAL: 30
+      EMAIL_MODE: smtp
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      SMTP_TLS: none
+      SMTP_FROM: deadline-notifier@local.test
     volumes:
       - ./services/go-notifier/config.yaml:/root/config.yaml
     restart: unless-stopped

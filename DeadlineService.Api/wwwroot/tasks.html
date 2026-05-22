@@ -4,179 +4,120 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Мои задачи — Deadline Service</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f6f8;
-      margin: 0;
-      padding: 40px 16px;
-      color: #111827;
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 38px;
-    }
-
-    .status {
-      color: #4b5563;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-
-    .card {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.04);
-    }
-
-    h2, h3 {
-      margin-top: 0;
-    }
-
-    input, textarea, button {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    button {
-      cursor: pointer;
-      background: #0f172a;
-      color: white;
-      border: none;
-    }
-
-    button:hover {
-      background: #1e293b;
-    }
-
-    .ghost-btn {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    .ghost-btn:hover {
-      background: #d1d5db;
-    }
-
-    .danger-btn {
-      background: #b91c1c;
-    }
-
-    .danger-btn:hover {
-      background: #991b1b;
-    }
-
-    .task {
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 14px;
-      background: #fafafa;
-    }
-
-    .task-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .task-meta {
-      color: #374151;
-      margin-bottom: 6px;
-    }
-
-    .task-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .task-actions button {
-      width: auto;
-      min-width: 160px;
-      margin-bottom: 0;
-    }
-
-    .edit-panel {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #ddd;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .top-actions button {
-      width: auto;
-      min-width: 180px;
-      margin-bottom: 0;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/site.css" />
 </head>
 <body onload="initTasksPage()">
-  <div class="container">
-    <div class="topbar">
-      <div>
-        <h1>Мои задачи</h1>
-        <div id="status" class="status">Авторизация...</div>
+  <div class="container container--wide">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo">DS</div>
+        <div>
+          <h1>Мои задачи</h1>
+          <p id="status" class="status-pill">Загрузка…</p>
+        </div>
       </div>
-     <div class="top-actions">
-  <button id="adminPanelBtn" class="ghost-btn hidden" onclick="window.location.href='/admin.html'">
-    В админ-панель
-  </button>
-  <button class="ghost-btn" onclick="loadTasks()">Обновить список</button>
-  <button class="danger-btn" onclick="logout()">Выйти</button>
-</div>
-    </div>
+      <nav class="nav-actions">
+        <button id="adminPanelBtn" class="btn-ghost hidden" onclick="window.location.href='/admin.html'">Админ</button>
+        <button class="btn-ghost" onclick="window.location.href='/notifications.html'">Уведомления</button>
+        <button class="btn-ghost" onclick="loadTasks()">Обновить</button>
+        <button class="btn-danger" onclick="logout()">Выйти</button>
+      </nav>
+    </header>
 
-    <div class="card">
-      <h2>Создать задачу</h2>
-      <input id="taskTitle" type="text" placeholder="Название задачи" />
-      <textarea id="taskDescription" placeholder="Описание"></textarea>
-      <input id="taskDeadline" type="datetime-local" />
-      <input id="taskPriority" type="text" placeholder="Приоритет" value="High" />
-      <button onclick="createTask()">Создать задачу</button>
+    <div class="card-grid">
+      <div class="card">
+        <h2>Новая задача</h2>
+        <p class="card-desc">Укажите дедлайн и настройте напоминания</p>
+
+        <label for="taskTitle">Название</label>
+        <input id="taskTitle" type="text" placeholder="Например: Сдать отчёт" />
+
+        <label for="taskDescription">Описание</label>
+        <textarea id="taskDescription" placeholder="Детали задачи (необязательно)"></textarea>
+
+        <div class="form-row">
+          <div>
+            <label for="taskDeadline">Дедлайн</label>
+            <input id="taskDeadline" type="datetime-local" />
+          </div>
+          <div>
+            <label for="taskPriority">Приоритет</label>
+            <select id="taskPriority">
+              <option value="High">Высокий</option>
+              <option value="Medium" selected>Средний</option>
+              <option value="Low">Низкий</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="reminder-box">
+          <h3>Напоминания</h3>
+          <div class="form-row">
+            <div>
+              <label for="remindValue">За сколько</label>
+              <input id="remindValue" type="number" min="1" value="1" />
+            </div>
+            <div>
+              <label for="remindUnit">Единица</label>
+              <select id="remindUnit">
+                <option value="Minutes">Минут</option>
+                <option value="Hours" selected>Часов</option>
+                <option value="Days">Дней</option>
+              </select>
+            </div>
+          </div>
+          <div class="checkbox-row">
+            <label><input id="notifyEmail" type="checkbox" checked /> Email</label>
+            <label><input id="notifyInApp" type="checkbox" checked /> В приложении</label>
+          </div>
+        </div>
+
+        <button class="btn-block" onclick="createTask()">Создать задачу</button>
+      </div>
+
+      <div class="card">
+        <h2>Фильтр</h2>
+        <p class="card-desc">Найдите задачи по статусу и сроку</p>
+
+        <label for="filterStatus">Статус</label>
+        <select id="filterStatus">
+          <option value="">Все</option>
+          <option value="Pending">Ожидает</option>
+          <option value="InProgress">В работе</option>
+          <option value="Done">Готово</option>
+        </select>
+
+        <div class="form-row">
+          <div>
+            <label for="filterDeadlineFrom">Дедлайн от</label>
+            <input id="filterDeadlineFrom" type="datetime-local" />
+          </div>
+          <div>
+            <label for="filterDeadlineTo">Дедлайн до</label>
+            <input id="filterDeadlineTo" type="datetime-local" />
+          </div>
+        </div>
+
+        <label class="checkbox-row">
+          <input id="filterOverdue" type="checkbox" />
+          Только просроченные
+        </label>
+
+        <div class="btn-group">
+          <button onclick="loadTasks()">Применить</button>
+          <button class="btn-ghost" onclick="resetTaskFilters()">Сбросить</button>
+        </div>
+      </div>
     </div>
 
     <div class="card">
       <h2>Список задач</h2>
+      <p class="card-desc">Все ваши активные и завершённые задачи</p>
       <div id="tasks"></div>
+    </div>
+
+    <div class="hint-box">
+      Email-уведомления в учебном режиме: <a href="http://localhost:8025" target="_blank" rel="noopener">открыть Mailpit</a>
     </div>
   </div>
 
