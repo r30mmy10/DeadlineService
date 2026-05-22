@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Регистрация — Deadline Service</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+</head>
+<body class="auth-page">
+
+  <div class="auth-wrap">
+
+    <!-- Hero -->
+    <div class="auth-hero">
+      <div class="brand-logo">DS</div>
+      <h1>Создать аккаунт</h1>
+      <p>Email будет использоваться для уведомлений</p>
+    </div>
+
+    <!-- Register card -->
+    <div class="card">
+      <h2>Регистрация</h2>
+      <p class="card-desc">Заполните форму — это займёт меньше минуты</p>
+
+      <!-- Email -->
+      <label for="regEmail">
+        <i class="ph ph-envelope"></i> Email
+      </label>
+      <input id="regEmail" type="email" placeholder="you@example.com"
+             autocomplete="email" oninput="validateEmail()" />
+      <div class="field-error hidden" id="regEmailError">
+        <i class="ph ph-warning-circle"></i> <span></span>
+      </div>
+
+      <!-- Password -->
+      <label for="regPassword">
+        <i class="ph ph-lock"></i> Пароль
+      </label>
+      <div class="input-wrap">
+        <input id="regPassword" type="password" placeholder="Минимум 6 символов"
+               autocomplete="new-password" oninput="validatePassword()" />
+        <button type="button" class="toggle-pw"
+                onclick="togglePassword('regPassword', this)">
+          <i class="ph ph-eye"></i>
+        </button>
+      </div>
+      <div class="field-error hidden" id="regPasswordError">
+        <i class="ph ph-warning-circle"></i> <span></span>
+      </div>
+
+      <!-- Password strength bar -->
+      <div id="strengthWrap" style="margin:-8px 0 14px;display:none">
+        <div style="height:4px;border-radius:4px;background:rgba(43,110,240,.10);overflow:hidden">
+          <div id="strengthBar" style="height:100%;width:0;border-radius:4px;transition:width .3s,background .3s"></div>
+        </div>
+        <div id="strengthLabel" style="font-size:11px;color:var(--muted);margin-top:4px"></div>
+      </div>
+
+      <!-- Confirm password -->
+      <label for="regConfirm">
+        <i class="ph ph-lock-key"></i> Повторите пароль
+      </label>
+      <div class="input-wrap">
+        <input id="regConfirm" type="password" placeholder="••••••••"
+               autocomplete="new-password" oninput="validateConfirm()" />
+        <button type="button" class="toggle-pw"
+                onclick="togglePassword('regConfirm', this)">
+          <i class="ph ph-eye"></i>
+        </button>
+      </div>
+      <div class="field-error hidden" id="regConfirmError">
+        <i class="ph ph-warning-circle"></i> <span></span>
+      </div>
+
+      <button class="btn-block" id="regBtn" onclick="doRegister()">
+        <i class="ph ph-user-plus"></i> Зарегистрироваться
+      </button>
+
+      <p class="auth-consent">
+        Нажимая кнопку, вы соглашаетесь с условиями использования сервиса
+        и даёте согласие на получение email-уведомлений о дедлайнах.
+      </p>
+
+      <div class="auth-switch">
+        Уже есть аккаунт? <a href="/login.html">Войти</a>
+      </div>
+
+      <div class="hint-box">
+        <i class="ph ph-info"></i>
+        Учебный режим: письма смотрите в
+        <a href="http://localhost:8025" target="_blank" rel="noopener">Mailpit</a>
+        (не в реальный ящик).
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+  <script>
+    if (localStorage.getItem("token")) {
+      window.location.href = "/tasks.html";
+    }
+
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const isHidden = input.type === "password";
+      input.type = isHidden ? "text" : "password";
+      btn.innerHTML = isHidden
+        ? '<i class="ph ph-eye-slash"></i>'
+        : '<i class="ph ph-eye"></i>';
+    }
+
+    function setFieldState(inputId, errorId, message, valid) {
+      const field = document.getElementById(inputId);
+      const err   = document.getElementById(errorId);
+      if (!field) return;
+      field.classList.toggle("input-invalid", !valid && !!message);
+      field.classList.toggle("input-valid",    valid);
+      if (err) {
+        err.classList.toggle("hidden", valid || !message);
+        if (!valid && message) err.querySelector("span").textContent = message;
+      }
+    }
+
+    function validateEmail() {
+      const val = document.getElementById("regEmail").value.trim();
+      const ok  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      setFieldState("regEmail", "regEmailError",
+        val ? (ok ? "" : "Введите корректный email") : "Введите email", ok && !!val);
+      return ok && !!val;
+    }
+
+    function getPasswordStrength(pw) {
+      let score = 0;
+      if (pw.length >= 6)  score++;
+      if (pw.length >= 10) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      return score;
+    }
+
+    function validatePassword() {
+      const val = document.getElementById("regPassword").value;
+      const wrap  = document.getElementById("strengthWrap");
+      const bar   = document.getElementById("strengthBar");
+      const label = document.getElementById("strengthLabel");
+
+      if (val.length > 0) {
+        wrap.style.display = "block";
+        const score = getPasswordStrength(val);
+        const pct   = (score / 5) * 100;
+        const colors = ["#E74C3C","#E74C3C","#F39C12","#F1C40F","#27AE60","#27AE60"];
+        const labels = ["","Очень слабый","Слабый","Средний","Хороший","Надёжный"];
+        bar.style.width      = pct + "%";
+        bar.style.background = colors[score];
+        label.textContent    = labels[score];
+      } else {
+        wrap.style.display = "none";
+      }
+
+      const ok = val.length >= 6;
+      setFieldState("regPassword", "regPasswordError",
+        val ? (ok ? "" : "Минимум 6 символов") : "Введите пароль", ok && !!val);
+
+      // Re-validate confirm if already filled
+      if (document.getElementById("regConfirm").value) validateConfirm();
+      return ok && !!val;
+    }
+
+    function validateConfirm() {
+      const pw  = document.getElementById("regPassword").value;
+      const val = document.getElementById("regConfirm").value;
+      const ok  = val === pw && val.length > 0;
+      setFieldState("regConfirm", "regConfirmError",
+        val ? (ok ? "" : "Пароли не совпадают") : "Повторите пароль", ok);
+      return ok;
+    }
+
+    async function doRegister() {
+      const emailOk   = validateEmail();
+      const passOk    = validatePassword();
+      const confirmOk = validateConfirm();
+      if (!emailOk || !passOk || !confirmOk) return;
+
+      const email    = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPassword").value;
+
+      const btn = document.getElementById("regBtn");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ph ph-circle-notch" style="animation:spin .8s linear infinite"></i> Создаём аккаунт…';
+
+      const response = await fetch(`${apiBase}/api/Auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ph ph-user-plus"></i> Зарегистрироваться';
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const msg = typeof data === "string" ? data : "Ошибка регистрации";
+        showToast(msg, "error");
+        if (msg.toLowerCase().includes("email")) {
+          setFieldState("regEmail", "regEmailError", msg, false);
+        }
+        return;
+      }
+
+      showToast("Аккаунт создан — войдите", "success");
+      setTimeout(() => { window.location.href = "/login.html"; }, 1000);
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter") doRegister();
+    });
+  </script>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</body>
+</html>

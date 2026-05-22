@@ -2,58 +2,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Вход — Deadline Service</title>
-  <link rel="stylesheet" href="/css/site.css" />
+  <meta http-equiv="refresh" content="0; url=/login.html" />
+  <title>Deadline Service</title>
 </head>
-<body class="auth-page">
-  <div class="auth-wrap">
-    <div class="auth-hero">
-      <div class="brand-logo">DS</div>
-      <h1>Deadline Service</h1>
-      <p>Контроль дедлайнов и умные напоминания</p>
-    </div>
-
-    <div class="card">
-      <div class="auth-tabs">
-        <button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Вход</button>
-        <button type="button" class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Регистрация</button>
-      </div>
-
-      <div id="panelLogin" class="auth-panel">
-        <h2>Добро пожаловать</h2>
-        <p class="card-desc">Войдите, чтобы управлять задачами</p>
-        <label for="loginEmail">Email</label>
-        <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="email" />
-        <label for="loginPassword">Пароль</label>
-        <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
-        <button class="btn-block" onclick="login()">Войти</button>
-      </div>
-
-      <div id="panelRegister" class="auth-panel hidden">
-        <h2>Создать аккаунт</h2>
-        <p class="card-desc">Email будет использоваться для уведомлений</p>
-        <label for="registerEmail">Email</label>
-        <input id="registerEmail" type="email" placeholder="you@example.com" autocomplete="email" />
-        <label for="registerPassword">Пароль</label>
-        <input id="registerPassword" type="password" placeholder="••••••••" autocomplete="new-password" />
-        <button class="btn-block" onclick="register()">Зарегистрироваться</button>
-      </div>
-
-      <div class="hint-box">
-        Учебный режим: письма смотрите в <a href="http://localhost:8025" target="_blank" rel="noopener">Mailpit</a> (не в реальный ящик).
-      </div>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
-  <script>
-    function switchAuthTab(tab) {
-      document.getElementById("panelLogin").classList.toggle("hidden", tab !== "login");
-      document.getElementById("panelRegister").classList.toggle("hidden", tab !== "register");
-      document.getElementById("tabLogin").classList.toggle("active", tab === "login");
-      document.getElementById("tabRegister").classList.toggle("active", tab === "register");
-    }
-  </script>
+<body>
+  <script>window.location.replace("/login.html");</script>
 </body>
 </html>

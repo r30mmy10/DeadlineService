@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Вход — Deadline Service</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+</head>
+<body class="auth-page">
+
+  <div class="auth-wrap">
+
+    <!-- Hero -->
+    <div class="auth-hero">
+      <div class="brand-logo">DS</div>
+      <h1>Deadline Service</h1>
+      <p>Контроль дедлайнов и умные напоминания</p>
+    </div>
+
+    <!-- Login card -->
+    <div class="card">
+      <h2>Добро пожаловать</h2>
+      <p class="card-desc">Войдите, чтобы управлять задачами</p>
+
+      <label for="loginEmail">
+        <i class="ph ph-envelope"></i> Email
+      </label>
+      <input id="loginEmail" type="email" placeholder="you@example.com"
+             autocomplete="email" />
+      <div class="field-error hidden" id="emailError">
+        <i class="ph ph-warning-circle"></i> <span></span>
+      </div>
+
+      <label for="loginPassword">
+        <i class="ph ph-lock"></i> Пароль
+      </label>
+      <div class="input-wrap">
+        <input id="loginPassword" type="password" placeholder="••••••••"
+               autocomplete="current-password" />
+        <button type="button" class="toggle-pw"
+                onclick="togglePassword('loginPassword', this)"
+                title="Показать пароль">
+          <i class="ph ph-eye"></i>
+        </button>
+      </div>
+      <div class="field-error hidden" id="passwordError">
+        <i class="ph ph-warning-circle"></i> <span></span>
+      </div>
+
+      <button class="btn-block" id="loginBtn" onclick="doLogin()">
+        <i class="ph ph-sign-in"></i> Войти
+      </button>
+
+      <div class="auth-switch">
+        Нет аккаунта? <a href="/register.html">Зарегистрироваться</a>
+      </div>
+
+      <div class="hint-box">
+        <i class="ph ph-info"></i>
+        Учебный режим: письма смотрите в
+        <a href="http://localhost:8025" target="_blank" rel="noopener">Mailpit</a>
+        (не в реальный ящик).
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // Redirect if already logged in
+    if (localStorage.getItem("token")) {
+      window.location.href = "/tasks.html";
+    }
+
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const isHidden = input.type === "password";
+      input.type = isHidden ? "text" : "password";
+      btn.innerHTML = isHidden
+        ? '<i class="ph ph-eye-slash"></i>'
+        : '<i class="ph ph-eye"></i>';
+    }
+
+    function showFieldError(fieldId, errorId, message) {
+      const field = document.getElementById(fieldId);
+      const err   = document.getElementById(errorId);
+      if (field) field.classList.add("input-invalid");
+      if (err) {
+        err.classList.remove("hidden");
+        err.querySelector("span").textContent = message;
+      }
+    }
+
+    function clearErrors() {
+      ["loginEmail", "loginPassword"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove("input-invalid"); }
+      });
+      ["emailError", "passwordError"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      });
+    }
+
+    async function doLogin() {
+      clearErrors();
+      const email    = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      let valid = true;
+      if (!email) {
+        showFieldError("loginEmail", "emailError", "Введите email");
+        valid = false;
+      }
+      if (!password) {
+        showFieldError("loginPassword", "passwordError", "Введите пароль");
+        valid = false;
+      }
+      if (!valid) return;
+
+      const btn = document.getElementById("loginBtn");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ph ph-circle-notch" style="animation:spin .8s linear infinite"></i> Вход…';
+
+      const response = await fetch(`${apiBase}/api/Auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ph ph-sign-in"></i> Войти';
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        showToast("Неверный email или пароль", "error");
+        showFieldError("loginEmail", "emailError", "Проверьте данные");
+        return;
+      }
+
+      token = data.token;
+      localStorage.setItem("token", token);
+      showToast("Добро пожаловать!", "success");
+      setTimeout(() => { window.location.href = "/tasks.html"; }, 600);
+    }
+
+    // Enter key support
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter") doLogin();
+    });
+  </script>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</body>
+</html>

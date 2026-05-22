@@ -5,34 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Уведомления — Deadline Service</title>
   <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 </head>
 <body onload="initNotificationsPage()">
   <div class="container">
+
     <header class="app-header">
       <div class="brand">
         <div class="brand-logo">DS</div>
-        <div>
+        <div class="brand-text">
           <h1>Уведомления</h1>
           <p>История напоминаний о дедлайнах</p>
         </div>
       </div>
       <nav class="nav-actions">
-        <button class="btn-ghost" onclick="window.location.href='/tasks.html'">Задачи</button>
-        <button class="btn-ghost" onclick="loadNotifications()">Обновить</button>
-        <button class="btn-danger" onclick="logout()">Выйти</button>
+        <button class="btn-ghost" onclick="window.location.href='/tasks.html'">
+          <i class="ph ph-list-checks"></i> Задачи
+        </button>
+        <button class="btn-ghost" onclick="loadNotifications()">
+          <i class="ph ph-arrows-clockwise"></i>
+        </button>
+        <button class="btn-danger" onclick="logout()">
+          <i class="ph ph-sign-out"></i>
+        </button>
       </nav>
     </header>
 
     <div class="card">
-      <h2>Мои уведомления</h2>
-      <p class="card-desc">In-app записи и статусы отправки email</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <h2><i class="ph ph-bell" style="color:var(--accent)"></i> Мои уведомления</h2>
+        <button class="btn-secondary" style="height:34px;font-size:12px;padding:0 12px"
+                onclick="markAllRead()">
+          <i class="ph ph-checks"></i> Прочитать все
+        </button>
+      </div>
       <div id="notificationsList"></div>
     </div>
 
     <div class="hint-box">
-      Письма для проверки email-канала: <a href="http://localhost:8025" target="_blank" rel="noopener">Mailpit →</a>
+      <i class="ph ph-envelope-simple"></i>
+      Письма для проверки email-канала:
+      <a href="http://localhost:8025" target="_blank" rel="noopener">Mailpit →</a>
     </div>
   </div>
+
+  <div id="toast-container"></div>
   <script src="app.js"></script>
+  <script>
+    function markAllRead() {
+      const container = document.getElementById("notificationsList");
+      const allIds = container?._allIds || [];
+      document.querySelectorAll('.notif-item.unread').forEach(el => {
+        el.classList.remove('unread');
+        el.querySelector('.notif-dot')?.remove();
+      });
+      markAllNotifsRead(allIds);
+      showToast('Все уведомления прочитаны', 'success');
+    }
+  </script>
 </body>
 </html>

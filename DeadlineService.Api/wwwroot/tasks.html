@@ -5,122 +5,205 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Мои задачи — Deadline Service</title>
   <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 </head>
 <body onload="initTasksPage()">
   <div class="container container--wide">
+
+    <!-- Top Bar -->
     <header class="app-header">
       <div class="brand">
         <div class="brand-logo">DS</div>
-        <div>
+        <div class="brand-text">
           <h1>Мои задачи</h1>
           <p id="status" class="status-pill">Загрузка…</p>
         </div>
       </div>
       <nav class="nav-actions">
-        <button id="adminPanelBtn" class="btn-ghost hidden" onclick="window.location.href='/admin.html'">Админ</button>
-        <button class="btn-ghost" onclick="window.location.href='/notifications.html'">Уведомления</button>
-        <button class="btn-ghost" onclick="loadTasks()">Обновить</button>
-        <button class="btn-danger" onclick="logout()">Выйти</button>
+        <button id="adminPanelBtn" class="btn-ghost hidden"
+                onclick="window.location.href='/admin.html'">
+          <i class="ph ph-shield-check"></i> Админ
+        </button>
+        <button class="btn-ghost" onclick="window.location.href='/notifications.html'">
+          <i class="ph ph-bell"></i>
+        </button>
+        <button class="btn-ghost" onclick="loadTasks()">
+          <i class="ph ph-arrows-clockwise"></i>
+        </button>
+        <button class="btn-danger" onclick="logout()">
+          <i class="ph ph-sign-out"></i>
+        </button>
       </nav>
     </header>
 
-    <div class="card-grid">
-      <div class="card">
-        <h2>Новая задача</h2>
-        <p class="card-desc">Укажите дедлайн и настройте напоминания</p>
-
-        <label for="taskTitle">Название</label>
-        <input id="taskTitle" type="text" placeholder="Например: Сдать отчёт" />
-
-        <label for="taskDescription">Описание</label>
-        <textarea id="taskDescription" placeholder="Детали задачи (необязательно)"></textarea>
-
-        <div class="form-row">
-          <div>
-            <label for="taskDeadline">Дедлайн</label>
-            <input id="taskDeadline" type="datetime-local" />
-          </div>
-          <div>
-            <label for="taskPriority">Приоритет</label>
-            <select id="taskPriority">
-              <option value="High">Высокий</option>
-              <option value="Medium" selected>Средний</option>
-              <option value="Low">Низкий</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="reminder-box">
-          <h3>Напоминания</h3>
-          <div class="form-row">
-            <div>
-              <label for="remindValue">За сколько</label>
-              <input id="remindValue" type="number" min="1" value="1" />
-            </div>
-            <div>
-              <label for="remindUnit">Единица</label>
-              <select id="remindUnit">
-                <option value="Minutes">Минут</option>
-                <option value="Hours" selected>Часов</option>
-                <option value="Days">Дней</option>
-              </select>
-            </div>
-          </div>
-          <div class="checkbox-row">
-            <label><input id="notifyEmail" type="checkbox" checked /> Email</label>
-            <label><input id="notifyInApp" type="checkbox" checked /> В приложении</label>
-          </div>
-        </div>
-
-        <button class="btn-block" onclick="createTask()">Создать задачу</button>
-      </div>
-
-      <div class="card">
-        <h2>Фильтр</h2>
-        <p class="card-desc">Найдите задачи по статусу и сроку</p>
-
-        <label for="filterStatus">Статус</label>
-        <select id="filterStatus">
-          <option value="">Все</option>
-          <option value="Pending">Ожидает</option>
-          <option value="InProgress">В работе</option>
-          <option value="Done">Готово</option>
-        </select>
-
-        <div class="form-row">
-          <div>
-            <label for="filterDeadlineFrom">Дедлайн от</label>
-            <input id="filterDeadlineFrom" type="datetime-local" />
-          </div>
-          <div>
-            <label for="filterDeadlineTo">Дедлайн до</label>
-            <input id="filterDeadlineTo" type="datetime-local" />
-          </div>
-        </div>
-
-        <label class="checkbox-row">
-          <input id="filterOverdue" type="checkbox" />
-          Только просроченные
-        </label>
-
-        <div class="btn-group">
-          <button onclick="loadTasks()">Применить</button>
-          <button class="btn-ghost" onclick="resetTaskFilters()">Сбросить</button>
-        </div>
-      </div>
+    <!-- Filter pills -->
+    <div class="filter-pills">
+      <button class="filter-pill active" onclick="setFilter('all',this)">Все</button>
+      <button class="filter-pill" onclick="setFilter('Pending',this)">Ожидает</button>
+      <button class="filter-pill" onclick="setFilter('InProgress',this)">В работе</button>
+      <button class="filter-pill" onclick="setFilter('Done',this)">Готово</button>
+      <button class="filter-pill" onclick="setFilter('overdue',this)">
+        <i class="ph ph-warning"></i> Просроченные
+      </button>
     </div>
 
-    <div class="card">
-      <h2>Список задач</h2>
-      <p class="card-desc">Все ваши активные и завершённые задачи</p>
-      <div id="tasks"></div>
+    <!-- Main layout: sidebar + task list -->
+    <div class="tasks-layout">
+
+      <!-- Sidebar -->
+      <aside class="tasks-sidebar">
+
+        <!-- Create button -->
+        <button class="btn-create-task" onclick="window.location.href='/create-task.html'">
+          <i class="ph ph-plus"></i>
+          Новая задача
+        </button>
+
+        <!-- Filter card -->
+        <div class="card" style="margin-bottom:0">
+          <h2 style="font-size:15px;margin-bottom:14px">
+            <i class="ph ph-funnel" style="color:var(--accent)"></i> Фильтр
+          </h2>
+
+          <label for="filterStatus">Статус</label>
+          <select id="filterStatus" onchange="loadTasks()">
+            <option value="">Все статусы</option>
+            <option value="Pending">Ожидает</option>
+            <option value="InProgress">В работе</option>
+            <option value="Done">Готово</option>
+          </select>
+
+          <label for="filterDeadlineFrom">Дедлайн от</label>
+          <input id="filterDeadlineFrom" type="datetime-local" />
+
+          <label for="filterDeadlineTo">Дедлайн до</label>
+          <input id="filterDeadlineTo" type="datetime-local" />
+
+          <label style="display:flex;align-items:center;gap:8px;margin-bottom:16px;color:var(--ink);font-size:13px;cursor:pointer">
+            <input id="filterOverdue" type="checkbox" style="width:16px;height:16px;margin:0;accent-color:var(--accent)" />
+            Только просроченные
+          </label>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button onclick="loadTasks()" style="height:38px;font-size:13px">
+              <i class="ph ph-magnifying-glass"></i> Применить
+            </button>
+            <button class="btn-ghost" onclick="resetTaskFilters()" style="height:36px;font-size:13px">
+              <i class="ph ph-x"></i> Сбросить
+            </button>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- Task list -->
+      <main class="tasks-main">
+        <div class="card" style="margin-bottom:0">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <h2><i class="ph ph-list-checks" style="color:var(--accent)"></i> Список задач</h2>
+            <span id="taskCount" style="font-size:12px;color:var(--muted)"></span>
+          </div>
+          <p class="card-desc">Все ваши активные и завершённые задачи</p>
+          <div id="tasks"></div>
+        </div>
+      </main>
+
     </div>
 
-    <div class="hint-box">
-      Email-уведомления в учебном режиме: <a href="http://localhost:8025" target="_blank" rel="noopener">открыть Mailpit</a>
+    <div class="hint-box" style="margin-top:20px">
+      <i class="ph ph-envelope-simple"></i>
+      Email-уведомления в учебном режиме:
+      <a href="http://localhost:8025" target="_blank" rel="noopener">открыть Mailpit →</a>
     </div>
   </div>
 
+  <!-- FAB (mobile) -->
+  <button class="fab" title="Создать задачу"
+          onclick="window.location.href='/create-task.html'">
+    <i class="ph ph-plus"></i>
+  </button>
+
+  <div id="toast-container"></div>
   <script src="app.js"></script>
+  <script>
+    function setFilter(value, btn) {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const statusEl  = document.getElementById('filterStatus');
+      const overdueEl = document.getElementById('filterOverdue');
+      if (value === 'all')          { statusEl.value = ''; overdueEl.checked = false; }
+      else if (value === 'overdue') { statusEl.value = ''; overdueEl.checked = true; }
+      else                          { statusEl.value = value; overdueEl.checked = false; }
+      loadTasks();
+    }
+
+    // Show task count after load
+    const _origLoadTasks = loadTasks;
+    // Patch to update count badge after tasks render
+    const _taskCountObserver = new MutationObserver(() => {
+      const cards = document.querySelectorAll('#tasks .item-card');
+      const el = document.getElementById('taskCount');
+      if (el && cards.length > 0) el.textContent = `${cards.length} задач`;
+      else if (el) el.textContent = '';
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      const tasksEl = document.getElementById('tasks');
+      if (tasksEl) _taskCountObserver.observe(tasksEl, { childList: true });
+    });
+  </script>
+
+  <style>
+    /* Tasks page layout */
+    .tasks-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .tasks-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .btn-create-task {
+      width: 100%;
+      height: 48px;
+      background: var(--grad);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-md);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-btn);
+      transition: opacity .15s, box-shadow .15s, transform .12s;
+    }
+    .btn-create-task:hover  { opacity: .92; box-shadow: 0 12px 28px rgba(43,110,240,.40); }
+    .btn-create-task:active { transform: scale(0.97); }
+
+    .tasks-main { min-width: 0; }
+
+    /* Hide FAB on desktop, show on mobile */
+    @media (min-width: 641px) { .fab { display: none; } }
+
+    @media (max-width: 640px) {
+      .tasks-layout {
+        grid-template-columns: 1fr;
+      }
+      .tasks-sidebar {
+        position: static;
+      }
+      .btn-create-task { display: none; } /* use FAB on mobile */
+    }
+  </style>
 </body>
 </html>

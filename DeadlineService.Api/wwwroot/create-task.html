@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Новая задача — Deadline Service</title>
+  <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+</head>
+<body class="create-task-page" onload="initCreateTaskPage()">
+
+  <div class="container container--narrow">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <button class="btn-icon" onclick="window.location.href='/tasks.html'" title="Назад">
+          <i class="ph ph-arrow-left"></i>
+        </button>
+        <div class="brand-text">
+          <h1>Новая задача</h1>
+          <p>Укажите дедлайн и напоминания</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Form card -->
+    <div class="card">
+
+      <label for="taskTitle">Название <span style="color:var(--danger)">*</span></label>
+      <input id="taskTitle" type="text" placeholder="Например: Сдать отчёт" />
+      <div class="field-error hidden" id="titleError">
+        <i class="ph ph-warning-circle"></i> <span></span>
+      </div>
+
+      <label for="taskDescription">Описание</label>
+      <textarea id="taskDescription" placeholder="Детали задачи (необязательно)"></textarea>
+
+      <div class="form-row">
+        <div>
+          <label for="taskDeadline"><i class="ph ph-calendar"></i> Дедлайн <span style="color:var(--danger)">*</span></label>
+          <input id="taskDeadline" type="datetime-local" />
+          <div class="field-error hidden" id="deadlineError">
+            <i class="ph ph-warning-circle"></i> <span></span>
+          </div>
+        </div>
+        <div>
+          <label for="taskPriority"><i class="ph ph-flag"></i> Приоритет</label>
+          <select id="taskPriority">
+            <option value="High">🔴 Высокий</option>
+            <option value="Medium" selected>🟡 Средний</option>
+            <option value="Low">🟢 Низкий</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="reminder-box">
+        <h3><i class="ph ph-bell-ringing"></i> Напоминания</h3>
+
+        <!-- Quick presets -->
+        <p style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500">Быстрые пресеты</p>
+        <div class="reminder-toggles">
+          <label class="reminder-toggle">
+            <div class="reminder-toggle-info">
+              <span class="reminder-toggle-label">За 1 час</span>
+              <span class="reminder-toggle-sub">Напомнить за час до дедлайна</span>
+            </div>
+            <input type="checkbox" id="remind1h" checked class="toggle-input" />
+            <span class="toggle-track"></span>
+          </label>
+          <label class="reminder-toggle">
+            <div class="reminder-toggle-info">
+              <span class="reminder-toggle-label">За 3 часа</span>
+              <span class="reminder-toggle-sub">Напомнить за 3 часа</span>
+            </div>
+            <input type="checkbox" id="remind3h" class="toggle-input" />
+            <span class="toggle-track"></span>
+          </label>
+          <label class="reminder-toggle">
+            <div class="reminder-toggle-info">
+              <span class="reminder-toggle-label">За 1 день</span>
+              <span class="reminder-toggle-sub">Напомнить за сутки</span>
+            </div>
+            <input type="checkbox" id="remind1d" checked class="toggle-input" />
+            <span class="toggle-track"></span>
+          </label>
+          <label class="reminder-toggle">
+            <div class="reminder-toggle-info">
+              <span class="reminder-toggle-label">За 3 дня</span>
+              <span class="reminder-toggle-sub">Напомнить за 3 дня</span>
+            </div>
+            <input type="checkbox" id="remind3d" class="toggle-input" />
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <!-- Custom time -->
+        <div class="divider" style="margin:14px 0 12px"></div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500">
+          <i class="ph ph-sliders"></i> Своё время напоминания
+        </p>
+        <div class="form-row" style="margin-bottom:0">
+          <div>
+            <label for="remindValue" style="margin-bottom:4px">За сколько</label>
+            <input id="remindValue" type="number" min="1" value="1" placeholder="1" style="margin-bottom:0" />
+          </div>
+          <div>
+            <label for="remindUnit" style="margin-bottom:4px">Единица</label>
+            <select id="remindUnit" style="margin-bottom:0">
+              <option value="Minutes">Минут</option>
+              <option value="Hours" selected>Часов</option>
+              <option value="Days">Дней</option>
+            </select>
+          </div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:6px">
+          Если заполнено — используется вместо пресетов выше
+        </p>
+
+        <div class="divider" style="margin:14px 0 12px"></div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:500">Каналы уведомлений</p>
+        <div class="checkbox-row">
+          <label><input id="notifyEmail" type="checkbox" checked />
+            <i class="ph ph-envelope"></i> Email</label>
+          <label><input id="notifyInApp" type="checkbox" checked />
+            <i class="ph ph-bell"></i> В приложении</label>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:12px;align-items:center;margin-top:4px">
+        <button class="btn-block" id="createBtn" onclick="submitCreateTask()" style="flex:1">
+          <i class="ph ph-check"></i> Создать задачу
+        </button>
+        <button class="btn-ghost" onclick="window.location.href='/tasks.html'"
+                style="height:48px;padding:0 20px;flex-shrink:0">
+          <i class="ph ph-x"></i> Отмена
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+  <script>
+    function initCreateTaskPage() {
+      token = localStorage.getItem("token") || "";
+      if (!token) { window.location.href = "/login.html"; }
+    }
+
+    async function submitCreateTask() {
+      const title      = document.getElementById("taskTitle").value.trim();
+      const deadlineAt = document.getElementById("taskDeadline").value;
+
+      // Validation
+      let valid = true;
+      if (!title) {
+        showFieldErr("titleError", "Введите название задачи");
+        document.getElementById("taskTitle").classList.add("input-invalid");
+        valid = false;
+      } else {
+        hideFieldErr("titleError");
+        document.getElementById("taskTitle").classList.remove("input-invalid");
+      }
+      if (!deadlineAt) {
+        showFieldErr("deadlineError", "Укажите дедлайн");
+        document.getElementById("taskDeadline").classList.add("input-invalid");
+        valid = false;
+      } else {
+        hideFieldErr("deadlineError");
+        document.getElementById("taskDeadline").classList.remove("input-invalid");
+      }
+      if (!valid) return;
+
+      const description   = document.getElementById("taskDescription").value;
+      const priority      = document.getElementById("taskPriority").value;
+      const notifyByEmail = document.getElementById("notifyEmail").checked;
+      const notifyInApp   = document.getElementById("notifyInApp").checked;
+
+      // Collect active reminders — custom field takes priority over presets
+      const customValue = parseInt(document.getElementById("remindValue")?.value || "0", 10);
+      const customUnit  = document.getElementById("remindUnit")?.value || "Hours";
+
+      let reminder;
+      if (customValue > 0) {
+        // Custom time wins
+        reminder = { remindBeforeValue: customValue, remindBeforeUnit: customUnit, notifyByEmail, notifyInApp };
+      } else {
+        // Fall back to first active preset
+        const presets = [];
+        if (document.getElementById("remind1h").checked) presets.push({ value: 1, unit: "Hours" });
+        if (document.getElementById("remind3h").checked) presets.push({ value: 3, unit: "Hours" });
+        if (document.getElementById("remind1d").checked) presets.push({ value: 1, unit: "Days"  });
+        if (document.getElementById("remind3d").checked) presets.push({ value: 3, unit: "Days"  });
+        reminder = presets.length > 0
+          ? { remindBeforeValue: presets[0].value, remindBeforeUnit: presets[0].unit, notifyByEmail, notifyInApp }
+          : { remindBeforeValue: 1, remindBeforeUnit: "Hours", notifyByEmail, notifyInApp };
+      }
+
+      const btn = document.getElementById("createBtn");
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ph ph-circle-notch" style="animation:spin .8s linear infinite"></i> Создаём…';
+
+      const response = await fetch(`${apiBase}/api/Tasks`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+          title, description,
+          deadlineAt: new Date(deadlineAt).toISOString(),
+          priority, reminder
+        })
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ph ph-check"></i> Создать задачу';
+
+      if (!response.ok) { showToast("Ошибка создания задачи", "error"); return; }
+
+      showToast("Задача создана!", "success");
+      setTimeout(() => { window.location.href = "/tasks.html"; }, 700);
+    }
+
+    function showFieldErr(id, msg) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove("hidden");
+      el.querySelector("span").textContent = msg;
+    }
+    function hideFieldErr(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("hidden");
+    }
+  </script>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toggle switches */
+    .reminder-toggles { display: flex; flex-direction: column; gap: 2px; }
+
+    .reminder-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-radius: var(--r-sm);
+      cursor: pointer; transition: background .15s;
+      margin: 0;
+    }
+    .reminder-toggle:hover { background: rgba(43,110,240,0.05); }
+
+    .reminder-toggle-info { flex: 1; }
+    .reminder-toggle-label { font-size: 14px; font-weight: 500; color: var(--ink); display: block; }
+    .reminder-toggle-sub   { font-size: 12px; color: var(--muted); display: block; margin-top: 1px; }
+
+    .toggle-input { display: none; }
+
+    .toggle-track {
+      width: 40px; height: 22px; border-radius: 11px;
+      background: rgba(43,110,240,0.15);
+      position: relative; flex-shrink: 0;
+      transition: background .2s;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+      transition: transform .2s;
+    }
+    .toggle-input:checked + .toggle-track {
+      background: var(--accent);
+    }
+    .toggle-input:checked + .toggle-track::after {
+      transform: translateX(18px);
+    }
+  </style>
+</body>
+</html>

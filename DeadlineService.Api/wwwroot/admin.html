@@ -5,43 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Админ — Deadline Service</title>
   <link rel="stylesheet" href="/css/site.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 </head>
 <body onload="initAdminPage()">
   <div class="container container--wide">
+
     <header class="app-header">
       <div class="brand">
         <div class="brand-logo">DS</div>
-        <div>
+        <div class="brand-text">
           <h1>Админ-панель</h1>
           <p id="adminStatus">Проверка доступа…</p>
         </div>
       </div>
       <nav class="nav-actions">
-        <button class="btn-ghost" onclick="window.location.href='/tasks.html'">К задачам</button>
-        <button class="btn-ghost" onclick="loadAdminData()">Обновить</button>
-        <button class="btn-danger" onclick="logout()">Выйти</button>
+        <button class="btn-ghost" onclick="window.location.href='/tasks.html'">
+          <i class="ph ph-list-checks"></i> К задачам
+        </button>
+        <button class="btn-ghost" onclick="loadAdminData()">
+          <i class="ph ph-arrows-clockwise"></i>
+        </button>
+        <button class="btn-danger" onclick="logout()">
+          <i class="ph ph-sign-out"></i>
+        </button>
       </nav>
     </header>
 
-    <div class="card">
-      <h2>Пользователи</h2>
-      <p class="card-desc">Просмотр и блокировка аккаунтов</p>
-      <div id="adminUsers"></div>
+    <!-- Tabs -->
+    <div class="card" style="padding:6px;margin-bottom:20px">
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('Users',this)">
+          <i class="ph ph-users"></i> Пользователи
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('Tasks',this)">
+          <i class="ph ph-list-checks"></i> Задачи
+        </button>
+        <button class="admin-tab" onclick="switchAdminTab('Notifications',this)">
+          <i class="ph ph-bell"></i> Уведомления
+        </button>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>Все задачи</h2>
-      <p class="card-desc">Задачи всех пользователей системы</p>
-      <div id="adminTasks"></div>
+    <div id="panelUsers" class="admin-panel active">
+      <div class="card">
+        <h2><i class="ph ph-users" style="color:var(--accent)"></i> Пользователи</h2>
+        <p class="card-desc">Просмотр и блокировка аккаунтов</p>
+        <div id="adminUsers"></div>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>Все уведомления</h2>
-      <p class="card-desc">Сформированные Go-сервисом уведомления</p>
-      <div id="adminNotifications"></div>
+    <div id="panelTasks" class="admin-panel">
+      <div class="card">
+        <h2><i class="ph ph-list-checks" style="color:var(--accent)"></i> Все задачи</h2>
+        <p class="card-desc">Задачи всех пользователей системы</p>
+        <div id="adminTasks"></div>
+      </div>
     </div>
+
+    <div id="panelNotifications" class="admin-panel">
+      <div class="card">
+        <h2><i class="ph ph-bell" style="color:var(--accent)"></i> Все уведомления</h2>
+        <p class="card-desc">Сформированные Go-сервисом уведомления</p>
+        <div id="adminNotifications"></div>
+      </div>
+    </div>
+
   </div>
 
+  <div id="toast-container"></div>
   <script src="app.js"></script>
+  <script>
+    function switchAdminTab(name, btn) {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel' + name).classList.add('active');
+    }
+  </script>
 </body>
 </html>
