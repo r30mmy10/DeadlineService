@@ -30,6 +30,7 @@ func (r *TaskRepo) GetTasksNeedingNotification(ctx context.Context) ([]models.Ta
         JOIN "Users" u ON u."Id" = t."UserId"
         JOIN "NotificationSettings" ns ON ns."TaskId" = t."Id"
         WHERE t."Status" != 'Done'
+          AND u."IsBlocked" = false
           AND t."DeadlineAt" > NOW() - INTERVAL '30 days'
         ORDER BY t."Id", ns."Id"
     `
@@ -98,23 +99,24 @@ func (r *TaskRepo) UpdateNotificationStatus(ctx context.Context, id uuid.UUID, s
 // LogDeliveryAttempt записывает попытку отправки в историю
 func (r *TaskRepo) LogDeliveryAttempt(ctx context.Context, notifId uuid.UUID, attempt int, status string) error {
 	query := `
-		INSERT INTO "NotificationDeliveryHistories" ("NotificationId", "AttemptNumber", "Status", "AttemptedAt")
-		VALUES ($1, $2, $3, NOW())
+		INSERT INTO "NotificationDeliveryHistories" ("Id", "NotificationId", "AttemptNumber", "Status", "AttemptedAt")
+		VALUES (gen_random_uuid(), $1, $2, $3, NOW())
 	`
 	_, err := r.db.ExecContext(ctx, query, notifId, attempt, status)
 	return err
 }
 
-// IsAlreadyNotifiedForTaskSetting проверяет, было ли отправлено уведомление за последние 6 часов для данной задачи
-func (r *TaskRepo) IsAlreadyNotifiedForTaskSetting(ctx context.Context, taskId, settingId uuid.UUID) (bool, error) {
+// IsAlreadyNotified проверяет, было ли уведомление для задачи и канала после момента remindAt.
+func (r *TaskRepo) IsAlreadyNotified(ctx context.Context, taskId uuid.UUID, channel string, since time.Time) (bool, error) {
 	query := `
 		SELECT EXISTS(
 			SELECT 1 FROM "Notifications"
 			WHERE "TaskId" = $1
-			  AND "CreatedAt" > NOW() - INTERVAL '6 hours'
+			  AND LOWER("Channel") = LOWER($2)
+			  AND "CreatedAt" >= $3
 		)
 	`
 	var exists bool
-	err := r.db.GetContext(ctx, &exists, query, taskId)
+	err := r.db.GetContext(ctx, &exists, query, taskId, channel, since)
 	return exists, err
 }

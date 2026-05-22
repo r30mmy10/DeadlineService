@@ -1,5 +1,5 @@
 database:
-  host: postgres   # имя сервиса в docker-compose
+  host: postgres
   port: 5432
   user: postgres
   password: mysecretpassword
@@ -8,3 +8,14 @@ database:
 
 worker:
   interval_seconds: 60
+
+# Учебный проект: письма перехватывает Mailpit (http://localhost:8025)
+email:
+  mode: smtp
+  smtp:
+    host: mailpit
+    port: 1025
+    tls: none
+    username: ""
+    password: ""
+    from: deadline-notifier@local.test

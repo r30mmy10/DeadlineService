@@ -8,7 +8,10 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o notifier ./cmd/notifier
+# Сборка образа падает, если unit-тесты не проходят
+RUN go test ./...
+
+RUN CGO_ENABLED=0 go build -o notifier ./cmd/notifier
 
 FROM alpine:latest
 

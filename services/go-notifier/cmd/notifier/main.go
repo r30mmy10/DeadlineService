@@ -8,6 +8,7 @@ import (
 	"notifier/internal/repository"
 	"notifier/internal/worker"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -18,19 +19,20 @@ import (
 )
 
 func main() {
-	// 1. Логгер
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
-	// 2. Конфиг
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	bindEnvVars()
+
 	if err := viper.ReadInConfig(); err != nil {
 		logger.Fatal("failed to read config", zap.Error(err))
 	}
 
-	// 3. Подключение к БД
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		viper.GetString("database.host"),
 		viper.GetInt("database.port"),
@@ -46,23 +48,41 @@ func main() {
 	defer db.Close()
 	logger.Info("connected to database")
 
-	// 4. Инициализация компонентов
 	repo := repository.NewTaskRepo(db, logger)
-	emailSender := email.NewMockEmailSender(logger) // пока мок, потом заменим на реальный SMTP
+
+	emailSender, err := email.NewSenderFromConfig(viper.GetViper(), logger)
+	if err != nil {
+		logger.Fatal("failed to init email sender", zap.Error(err))
+	}
+
 	notif := notifier.NewNotifier(repo, emailSender, logger)
 	proc := worker.NewProcessor(repo, notif, logger)
 	interval := viper.GetInt("worker.interval_seconds")
 	sched := worker.NewScheduler(interval, proc, logger)
 
-	// 5. Graceful shutdown
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	// 6. Запуск шедулера в отдельной горутине
 	go sched.Run(ctx)
 
-	// 7. Ожидание сигнала завершения
 	<-ctx.Done()
 	logger.Info("shutting down gracefully, waiting for current iteration")
 	time.Sleep(2 * time.Second)
+}
+
+func bindEnvVars() {
+	_ = viper.BindEnv("database.host", "DB_HOST")
+	_ = viper.BindEnv("database.port", "DB_PORT")
+	_ = viper.BindEnv("database.user", "DB_USER")
+	_ = viper.BindEnv("database.password", "DB_PASSWORD")
+	_ = viper.BindEnv("database.dbname", "DB_NAME")
+	_ = viper.BindEnv("database.sslmode", "DB_SSLMODE")
+	_ = viper.BindEnv("worker.interval_seconds", "WORKER_INTERVAL")
+	_ = viper.BindEnv("email.mode", "EMAIL_MODE")
+	_ = viper.BindEnv("email.smtp.host", "SMTP_HOST")
+	_ = viper.BindEnv("email.smtp.port", "SMTP_PORT")
+	_ = viper.BindEnv("email.smtp.username", "SMTP_USERNAME")
+	_ = viper.BindEnv("email.smtp.password", "SMTP_PASSWORD")
+	_ = viper.BindEnv("email.smtp.from", "SMTP_FROM")
+	_ = viper.BindEnv("email.smtp.tls", "SMTP_TLS")
 }

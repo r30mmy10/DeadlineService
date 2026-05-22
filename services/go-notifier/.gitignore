@@ -9,7 +9,6 @@
 *.dll
 *.so
 *.dylib
-notifier
 notifier.exe
 
 # Test binaries
