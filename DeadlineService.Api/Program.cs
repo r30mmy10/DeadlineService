@@ -6,6 +6,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+DeadlineService.Api.Models.UserUnitTests.RunAll();
+DeadlineService.Api.Models.TaskItemUnitTests.RunAll();
+DeadlineService.Api.Models.NotificationUnitTests.RunAll();
+DeadlineService.Api.Models.NotificationSettingUnitTests.RunAll();
+DeadlineService.Api.Services.JwtServiceUnitTests.RunAll();
+await DeadlineService.Api.Services.NotificationSettingsServiceUnitTests.RunAllAsync();
+await DeadlineService.Api.Controllers.AuthControllerUnitTests.RunAllAsync();
+await DeadlineService.Api.Controllers.TasksControllerUnitTests.RunAllAsync();
+await DeadlineService.Api.Controllers.NotificationsControllerUnitTests.RunAllAsync();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
